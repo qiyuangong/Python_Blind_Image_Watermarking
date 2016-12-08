@@ -14,9 +14,11 @@ from skimage import img_as_ubyte, exposure
 from matplotlib import pyplot as plt
 from matplotlib.image import imsave
 import pickle
+# pip install PyWavelets
+import pywt
 
 
-def encode_watermark(original, watermark, alpha=1):
+def encode_Fourier_watermark(original, watermark, alpha=1):
     """
     Add watermark to target image.
     """
@@ -66,7 +68,7 @@ def encode_watermark(original, watermark, alpha=1):
         pickle.dump(FAO, w_raw_file)
 
 
-def decode_watermark(original, watermarked_file, alpha=1):
+def decode_Fourier_watermark(original, watermarked_file, alpha=1):
     """
     Detect and extract watermark from image.
     """
@@ -94,8 +96,27 @@ def decode_watermark(original, watermarked_file, alpha=1):
     # pdb.set_trace()
 
 
+def encode_wavelet_watermark(original, watermark, alpha=1):
+    im = imread(original).astype('float') / 255
+    mark = imread(watermark).astype('float') / 255
+    imr = im[:, :, 0]
+    mark_r = mark[:, :, 0]
+    img = im[:, :, 1]
+    mark_g = mark[:, :, 1]
+    imb = im[:, :, 2]
+    mark_b = mark[:, :, 2]
+    r = g = b = 0.04
+    coeffs = pywt.wavedec2(mark_r, 1, 'haar')
+    coeffs = pywt.wavedec2(imr, 2, 'haar')
+
+
+
+def decode_watermark(original, watermarked_file, alpha=1):
+
+
+
 if __name__ == '__main__':
-    # encode_watermark('gl1.jpg', 'watermark.jpg', 30)
-    # decode_watermark('gl1.jpg', 'watermarked_img.jpg', 30)
-    encode_watermark('gl1.jpg', 'watermark.jpg')
-    decode_watermark('gl1.jpg', 'gl1_raw')
+    # encode_Fourier_watermark('gl1.jpg', 'watermark.jpg', 30)
+    # decode_Fourier_watermark('gl1.jpg', 'watermarked_img.jpg', 30)
+    encode_Fourier_watermark('gl1.jpg', 'watermark.jpg')
+    decode_Fourier_watermark('gl1.jpg', 'gl1_raw')
